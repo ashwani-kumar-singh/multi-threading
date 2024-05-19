@@ -6,7 +6,7 @@ package collection.queue;
  * Attempts to put an element into a full queue will result in the operation blocking.
  * Similarly, attempts to take an element from an empty queue will also be blocked.
  *
- * @link: https://www.geeksforgeeks.org/blockingqueue-interface-in-java/
+ * @link https://www.geeksforgeeks.org/blockingqueue-interface-in-java/
  * https://www.geeksforgeeks.org/arrayblockingqueue-class-in-java/
  * https://www.geeksforgeeks.org/linkedblockingqueue-class-in-java/
  *

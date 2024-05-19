@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * requires memory for storing its elements, which means that you may need to create a new
  * ConcurrentLinkedDeque when the old one consumes too much memory.
  *
- * @link: <a href="https://www.geeksforgeeks.org/concurrentlinkeddeque-in-java-with-examples/">...</a>
+ * @link <a href="https://www.geeksforgeeks.org/concurrentlinkeddeque-in-java-with-examples/">...</a>
  */
 public class ConcurrentLinkedDequeDemo {
     public static void main(String[] args) {

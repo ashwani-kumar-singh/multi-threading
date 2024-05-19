@@ -16,6 +16,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Iterator of ArrayList can perform remove operation while iteration. But Iterator of
  * CopyOnWriteArrayList cant perform remove operation while iteration, otherwise it will throw
  * run-time exception UnsupportedOperationException.
+ *
+ * @link <a href="https://www.geeksforgeeks.org/copyonwritearraylist-in-java/">...</a>
  */
 
 public class CopyOnWriteArrayListDemo extends Thread {

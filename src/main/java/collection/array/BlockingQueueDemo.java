@@ -1,4 +1,9 @@
 package collection.array;
+/**
+ *
+ * @link https://www.geeksforgeeks.org/blockingqueue-interface-in-java/
+ *
+ */
 
 import java.util.*;
 
