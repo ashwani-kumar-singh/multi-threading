@@ -3,6 +3,9 @@ package collection.set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
+ * The implementation of ConcurrentSkipListSet is based on ConcurrentSkipListMap. The elements in ConcurrentSkipListSet
+ * are sorted by default in their natural ordering or by a Comparator provided at set creation time, depending on
+ * which constructor is used.
  * The elements in ConcurrentSkipListSet are sorted by default in their natural ordering or by a Comparator
  * provided at set creation time, depending on which constructor is used.
  * a. It implements Serializable, Cloneable, Iterable<E>, Collection<E>, NavigableSet<E>, Set<E>, SortedSet<E> interfaces.
