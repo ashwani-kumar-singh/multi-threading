@@ -1,21 +1,26 @@
-package thread.monitorlock.example;
+package thread.producerconsumer.blockingqueue;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
- * BlockingQueue has two primary methods i.e. put() and take()
- * put() : void put(E e) throws InterruptedException
- * e is the element to be added
- * InterruptedException is thrown if the thread is interrupted while waiting
  *
- * take(): E take() throws InterruptedException
- * returns head of the queue
- * InterruptedException is thrown if the thread is interrupted while waiting
+ * Producer and Consumer are two separate processes. Both processes share a common buffer or queue. The producer
+ * continuously produces certain data and pushes it onto the buffer, whereas the consumer consumes those data from
+ * the buffer.
  *
- * BlockingQueue also has add(E e) and remove() methods. But these methods must not be used for
- * producer-consumer problems because:
- * a. add will throw IllegalStateException if the queue is full.
- * b. remove returns a boolean, but an element is to be returned.
+ * Both producer and consumer may try to update the queue at the same time. This could lead to data loss or inconsistencies.
+ * Producers might be slower than consumers. In such cases, the consumer would process elements fast and wait.
+ * In some cases, the consumer can be slower than the producer. This situation leads to a queue overflow issue.
+ * In real scenarios, we may have multiple producers, multiple consumers, or both. This may cause the same message
+ * to be processed by different consumers.
+ *
+ * We need to handle resource sharing and synchronization to solve a few complexities:
+ *
+ * Synchronization on queue while adding and removing data
+ * When the queue is empty, the consumer has to wait until the producer adds new data to the queue
+ * When the queue is full, the producer has to wait until the consumer consumes data and the queue has some
+ * empty buffer
+ * <a href="https://www.baeldung.com/java-producer-consumer-problem">...</a>
  */
 public class Client {
 

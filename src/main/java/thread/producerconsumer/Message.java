@@ -2,9 +2,9 @@ package thread.producerconsumer;
 
 public class Message {
     private int id;
-    private double data;
+    private String data;
 
-    public Message(int id, double data) {
+    public Message(int id, String data) {
         this.id = id;
         this.data = data;
     }
@@ -17,11 +17,11 @@ public class Message {
         this.id = id;
     }
 
-    public double getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(double data) {
+    public void setData(String data) {
         this.data = data;
     }
 }

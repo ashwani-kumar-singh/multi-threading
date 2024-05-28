@@ -2,9 +2,9 @@ package thread.producerconsumer;
 
 public class Consumer implements Runnable {
     private boolean running = false;
-    private final DataQueue dataQueue;
+    private final DataQueue<Message> dataQueue;
 
-    public Consumer(DataQueue dataQueue) {
+    public Consumer(DataQueue<Message> dataQueue) {
         this.dataQueue = dataQueue;
     }
 
@@ -32,7 +32,7 @@ public class Consumer implements Runnable {
             if (!running) {
                 break;
             }
-            Message message = dataQueue.poll();
+            Message message = dataQueue.take();
             useMessage(message);
             //Sleeping on random time to make it realistic
             ThreadUtil.sleep((long) (Math.random() * 50));
@@ -42,7 +42,7 @@ public class Consumer implements Runnable {
 
     private void useMessage(Message message) {
         if (message != null) {
-            System.out.println(String.format("[%s] Consuming Message. Id: %d, Data: %f%n",
+            System.out.println(String.format("[%s] Consuming Message. Id: %d, Data: %s",
                     Thread.currentThread().getName(), message.getId(), message.getData()));
         }
     }

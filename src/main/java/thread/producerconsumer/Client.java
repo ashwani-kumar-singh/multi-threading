@@ -7,7 +7,7 @@ public class Client {
     private static final int MAX_QUEUE_CAPACITY = 5;
 
     public static void demoSingleProducerAndSingleConsumer() {
-        DataQueue dataQueue = new DataQueue(MAX_QUEUE_CAPACITY);
+        DataQueue<Message> dataQueue = new DataQueue<>(MAX_QUEUE_CAPACITY);
 
         Producer producer = new Producer(dataQueue);
         Thread producerThread = new Thread(producer);
@@ -34,7 +34,7 @@ public class Client {
 
     // blocked queue can easily handle multiple producer and consumer
     public static void demoMultipleProducersAndMultipleConsumers() {
-        DataQueue dataQueue = new DataQueue(MAX_QUEUE_CAPACITY);
+        DataQueue<Message> dataQueue = new DataQueue<>(MAX_QUEUE_CAPACITY);
         int producerCount = 5;
         int consumerCount = 5;
         List<Thread> threads = new ArrayList<>();
@@ -58,7 +58,7 @@ public class Client {
         }
 
         // let threads run for ten seconds
-        ThreadUtil.sleep(10000);
+        ThreadUtil.sleep(3000);
 
         // stop threads
         consumers.forEach(Consumer::stop);
@@ -69,6 +69,6 @@ public class Client {
 
     public static void main(String[] args) {
         demoSingleProducerAndSingleConsumer();
-        demoMultipleProducersAndMultipleConsumers();
+        //demoMultipleProducersAndMultipleConsumers();
     }
 }

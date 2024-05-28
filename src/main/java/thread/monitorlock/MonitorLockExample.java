@@ -1,7 +1,5 @@
 package thread.monitorlock;
 
-import thread.creation.ThreadExample;
-
 public class MonitorLockExample {
 
     public synchronized void task1() {

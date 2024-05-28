@@ -45,8 +45,8 @@ public class Producer implements Runnable {
     }
 
     private Message generateMessage() {
-        Message message = new Message(idSequence.incrementAndGet(), Math.random());
-        System.out.println(String.format("[%s] Generated Message. Id: %d, Data: %f%n",
+        Message message = new Message(idSequence.incrementAndGet(), "Message for id: " + idSequence);
+        System.out.println(String.format("[%s] Generated Message. Id: %d, Data: %s",
                 Thread.currentThread().getName(), message.getId(), message.getData()));
 
         return message;

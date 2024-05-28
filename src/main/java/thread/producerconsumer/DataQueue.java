@@ -3,8 +3,8 @@ package thread.producerconsumer;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class DataQueue {
-    private final Queue<Message> queue = new LinkedList<>();
+public class DataQueue<E> {
+    private final Queue<E> queue = new LinkedList<>();
     private final int maxSize;
     private final Object IS_FULL = new Object();
     private final Object IS_EMPTY = new Object();
@@ -21,18 +21,18 @@ public class DataQueue {
         return queue.size() == this.maxSize;
     }
 
-    public void add(Message message) {
-        queue.add(message);
+    public void add(E e) {
+        queue.add(e);
         notifyIsNotEmpty();
     }
 
-    public Message poll() {
-        Message mess = queue.poll();
+    public E take() {
+        E mess = queue.poll();
         notifyIsNotFull();
         return mess;
     }
 
-    public Queue<Message> getQueue() {
+    public Queue<E> getQueue() {
         return queue;
     }
 

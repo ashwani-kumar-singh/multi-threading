@@ -5,9 +5,9 @@ public class Client {
         System.out.println("Main method start | thread name: " + Thread.currentThread().getName());
         MonitorLockExample monitorLockExample = new MonitorLockExample();
 
-        Thread thread1 = new Thread(() -> monitorLockExample.task1());
-        Thread thread2 = new Thread(() -> monitorLockExample.task2());
-        Thread thread3 = new Thread(() -> monitorLockExample.task3());
+        Thread thread1 = new Thread(monitorLockExample::task1);
+        Thread thread2 = new Thread(monitorLockExample::task2);
+        Thread thread3 = new Thread(monitorLockExample::task3);
 
         thread1.start();
         thread2.start();
