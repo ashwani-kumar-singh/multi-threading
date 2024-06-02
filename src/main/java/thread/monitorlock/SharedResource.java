@@ -1,6 +1,6 @@
 package thread.monitorlock;
 
-public class MonitorLockExample {
+public class SharedResource {
 
     public synchronized void task1() {
         try {
