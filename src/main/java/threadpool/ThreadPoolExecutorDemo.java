@@ -178,6 +178,27 @@ public class ThreadPoolExecutorDemo {
             throw new RuntimeException(e);
         }
         scheduledFuture.cancel(true);
+
+
+        // Run a task after 500 milliseconds delay and then repeat it after delay of 100 milliseconds from the time
+        // at which previous task get completed.
+        CountDownLatch lock1 = new CountDownLatch(3);
+        ScheduledExecutorService scheduledFixedDelayExecutorService = Executors.newScheduledThreadPool(5);
+        ScheduledFuture<?> scheduledFixedDelayFuture = scheduledFixedDelayExecutorService.scheduleWithFixedDelay(() -> {
+            System.out.println("scheduleAtFixedDelay- Hey Fixed delay example!!");
+            lock1.countDown();
+        }, 500, 100, TimeUnit.MILLISECONDS);
+        try {
+            lock1.await(1000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+        }
+        try {
+            if (scheduledFixedDelayFuture.isDone())
+                System.out.println("scheduledFixedDelayFuture- " + scheduledFixedDelayFuture.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        scheduledFixedDelayFuture.cancel(true);
     }
 
 }

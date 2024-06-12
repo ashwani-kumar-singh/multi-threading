@@ -18,6 +18,7 @@ import java.util.concurrent.RecursiveTask;
  */
 public class ForkJoinPoolDemo {
     public static void main(String[] args) {
+        System.out.println("No of processors: " + Runtime.getRuntime().availableProcessors());
         TreeNode tree = new TreeNode(5,
                 new TreeNode(3), new TreeNode(2,
                 new TreeNode(2), new TreeNode(8)));
@@ -25,6 +26,7 @@ public class ForkJoinPoolDemo {
         ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
         int sum = forkJoinPool.invoke(new CountingTask(tree));
         System.out.println("sum of tree node: " + sum);
+        forkJoinPool.shutdown();
     }
 
 }

@@ -1,5 +1,7 @@
 package threadpool;
 
+import com.sun.corba.se.spi.orbutil.threadpool.ThreadPool;
+
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,9 +15,10 @@ import java.util.stream.Stream;
  * <p>
  * Static methods "runAsync" and "supplyAsync" allow us to create a CompletableFuture instance out of Runnable
  * and Supplier functional types correspondingly.
+ * If we do not pass executor it will by default use fork join executor pool.
  * It provide an instance of the Supplier as a lambda expression that does the calculation and returns the result.
  * <p>
- * "thenAccept" -> method receives a Consumer and passes it the result of the computation. If we don’t need to return
+ * "thenAccept" ->Ths method is the end part of staging. thenAccept receives a Consumer and passes it the result of the computation. If we don’t need to return
  * a value down the Future chain, we can use an instance of the Consumer functional interface.
  * <p>
  * "thenRun" -> if we neither need the value of the computation nor want to return some value at the end of the chain,
@@ -33,11 +36,22 @@ import java.util.stream.Stream;
  * Difference Between thenApply() and thenCompose()
  * <p>
  * thenApply() -> We can use this method to work with the result of the previous call. However, a key point to
- * remember is that the return type will be combined of all calls.
+ * remember is that the return type will be combined of all calls. It uses same thread which completed previous
+ * async task. It will not create any new thread for it's execution.
  * <p>
+ * thenApplyAsync() -> These methods are usually intended for running a corresponding execution step in another thread.
+ * In contrast, the Async method without the Executor argument runs a step using the common fork/join pool
+ * implementation of Executor that is accessed with the ForkJoinPool.commonPool().
+ * If multiple "thenApplyAsync" is used , ordering can not be guarantee, they will run concurrently.
+ *
  * thenCompose() -> uses the previous stage as the argument. It will flatten and return a Future with the result directly,
  * rather than a nested future as we observed in thenApply().
- * <p>
+ *
+ * thenComposeAsync() -> uses the previous stage as the argument. the Async method without the Executor argument
+ * runs a step using the common fork/join pool implementation of Executor that is accessed with the
+ * ForkJoinPool.commonPool().
+ * We bring some ordering for any async task using "thenComposeAsync".
+ *
  * allOf() -> method of the CompletableFuture class to create a new CompletableFuture that will complete when all of
  * the specified Future tasks have completed.
  * <p>
@@ -52,9 +66,6 @@ import java.util.stream.Stream;
  * we use the handle method to provide a default value when the asynchronous computation
  * of a greeting was finished with an error.
  *
- * thenApplyAsync() -> These methods are usually intended for running a corresponding execution step in another thread.
- * In contrast, the Async method without the Executor argument runs a step using the common fork/join pool
- * implementation of Executor that is accessed with the ForkJoinPool.commonPool(),
  *
  * <a href="https://connect2grp.medium.com/understating-java-future-and-callable-features-aec70d2aef6">...</a>
  * <a href="https://www.baeldung.com/java-completablefuture">...</a>
@@ -65,14 +76,15 @@ public class CompletableFutureDemo {
         try {
             System.out.println("completableFuture.complete method result -> " + calculateAsync().get());
             System.out.println("completableFuture.thenApply method result -> " + thenApply().get());
+            System.out.println("completableFuture.thenApplyAsync method result -> " + thenApplyAsync().get());
             System.out.println("completableFuture.thenAccept method result -> " + thenAccept().get());
             System.out.println("completableFuture.thenRun method result -> " + thenRun().get());
             System.out.println("completableFuture.thenCombine method result -> " + thenCombine().get());
             System.out.println("completableFuture.thenCompose method result -> " + thenCompose().get());
+            System.out.println("completableFuture.thenComposeAsync method result -> " + thenComposeAsync().get());
             System.out.println("completableFuture.allOf method result -> " + allOf().get());
             System.out.println("completableFuture.exceptionally method result -> " + exceptionally().get());
             System.out.println("completableFuture.handle method result -> " + handle().get());
-            System.out.println("completableFuture.thenApplyAsync method result -> " + thenApplyAsync().get());
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -80,7 +92,7 @@ public class CompletableFutureDemo {
 
     private static Future<String> calculateAsync() throws InterruptedException {
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             Thread.sleep(500);
             completableFuture.complete("Hello");
@@ -92,25 +104,59 @@ public class CompletableFutureDemo {
 
     private static CompletableFuture<Void> thenAccept() {
         CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> "Hello");
-        CompletableFuture<Void> future = completableFuture.thenAccept(s -> System.out.println("Computation returned: " + s));
+        CompletableFuture<Void> future = completableFuture
+                .thenAccept(s -> System.out.println("Computation returned: " + s));
         return future;
     }
 
     private static CompletableFuture<Void> thenRun() {
         CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> "Hello");
-        CompletableFuture<Void> future = completableFuture.thenRun(() -> System.out.println("Computation finished."));
+        CompletableFuture<Void> future = completableFuture
+                .thenRun(() -> System.out.println("Computation finished."));
         return future;
     }
 
     private static CompletableFuture<Integer> thenApply() throws RuntimeException {
-        CompletableFuture<Integer> finalResult = CompletableFuture.supplyAsync(() -> 0).thenApply(s -> s + 1);
-        return finalResult;
+        CompletableFuture<Integer> completableFuture = CompletableFuture.supplyAsync(() -> {
+            System.out.println("executed by thread: " + Thread.currentThread().getName());
+            return 0;
+        });
+        CompletableFuture<Integer> future = completableFuture.thenApply(s -> {
+            System.out.println("thenApply executed by thread: " + Thread.currentThread().getName());
+            return s + 1;
+        });
+        return future;
+    }
+
+    public static CompletableFuture<String> thenApplyAsync() {
+        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
+            System.out.println("executed by thread: " + Thread.currentThread().getName());
+            return "Hello";
+        });
+        CompletableFuture<String> future = completableFuture.thenApplyAsync(s -> {
+            System.out.println("thenApplyAsync executed by thread: " + Thread.currentThread().getName());
+            return s + " World";
+        });
+        return future;
     }
 
 
     public static CompletableFuture<Integer> thenCompose() {
         CompletableFuture<Integer> finalResult = CompletableFuture.supplyAsync(() -> 0)
-                .thenCompose(futureResult -> CompletableFuture.supplyAsync(() -> 10 + futureResult));
+                .thenCompose(futureResult -> {
+                    System.out.println("thenCompose executed by thread: " + Thread.currentThread().getName());
+                    return CompletableFuture.supplyAsync(() -> 10 + futureResult);
+                });
+        return finalResult;
+    }
+
+    public static CompletableFuture<Integer> thenComposeAsync() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        CompletableFuture<Integer> finalResult = CompletableFuture.supplyAsync(() -> 0, executor)
+                .thenComposeAsync(futureResult -> {
+                    System.out.println("thenComposeAsync executed by thread: " + Thread.currentThread().getName());
+                    return CompletableFuture.supplyAsync(() -> 10 + futureResult, executor);
+                });
         return finalResult;
     }
 
@@ -156,14 +202,11 @@ public class CompletableFutureDemo {
                 throw new RuntimeException("Computation error!");
             }
             return "Hello, " + name;
-        }).handle((s, t) -> s != null ? s : "Hello, Stranger!");
+        }).handle((result, throwable) -> {
+            System.out.println("Exception: " + throwable.getMessage());
+            return result != null ? result : "Hello, Stranger!";
+        });
         return completableFuture;
-    }
-
-    public static CompletableFuture<String> thenApplyAsync() {
-        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> "Hello");
-        CompletableFuture<String> future = completableFuture.thenApplyAsync(s -> s + " World");
-        return future;
     }
 
 }
