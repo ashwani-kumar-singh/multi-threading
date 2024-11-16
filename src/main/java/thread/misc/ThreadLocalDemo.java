@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
  */
 public class ThreadLocalDemo {
     public static void main(String[] args) {
-        ThreadLocal<String> threadLocal = new ThreadLocal() {
+        ThreadLocal threadLocal = new ThreadLocal() {
             protected String initialValue() {
                 return "Initial Value";
             }

@@ -13,5 +13,8 @@ public class Client {
         Thread thread = new Thread(threadRunnable);
         thread.start();
         System.out.println("Main method end | thread name: " + Thread.currentThread().getName());
+
+        // creating thread using lambda expression (runnable functional interface)
+        new Thread(() -> System.out.println("Thread with lambda expression"));
     }
 }

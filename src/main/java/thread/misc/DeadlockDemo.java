@@ -40,7 +40,7 @@ public class DeadlockDemo extends Thread {
         Object p = new Object();
         synchronized (p) {
             synchronized (p) {
-                // deadlock. Since p is previously lockedwe will never reach here...
+                // deadlock. Since p is previously locked we will never reach here...
             }
         }
     }
